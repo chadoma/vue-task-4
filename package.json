@@ -1,0 +1,61 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "lint:scss": "vue-task4/node_modules/.binstylelint ./src/**/*.{vue,scss} --fix"
+  },
+  "dependencies": {
+    "@vue/composition-api": "^1.0.0-beta.19",
+    "axios": "^0.21.0",
+    "core-js": "^3.6.5",
+    "firebase": "^8.0.1",
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-typescript": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^5.0.2",
+    "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.12.0",
+    "prettier": "^1.19.1",
+    "sass-loader": "^8.0.2",
+    "stylelint": "^13.7.2",
+    "stylelint-config-recommended-scss": "3.3.0",
+    "stylelint-order": "^4.1.0",
+    "stylelint-scss": "^3.18.0",
+    "stylelint-webpack-plugin": "^2.1.1",
+    "typescript": "~3.9.7",
+    "vue-template-compiler": "^2.6.11",
+    "vuex-module-decorators": "^1.0.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint",
+      "git add"
+    ],
+    "*.vue": [
+      "npm run lint",
+      "npm run lint:scss",
+      "git add"
+    ],
+    "*.scss": [
+      "npm run lint:scss",
+      "git add"
+    ]
+  }
+}
