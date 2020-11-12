@@ -1,7 +1,9 @@
 export interface SignUpUser {
-  email: string
-  password: string
-  returnSecureToken?: boolean
+  email: string;
+  expiresIn: string
+  idToken: string
+  kind: string
+  localId: string
+  refreshToken: string
 }
-
 

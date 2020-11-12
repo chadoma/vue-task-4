@@ -4,6 +4,11 @@
     background-color: $bg-color-primary;
     margin-top: 1rem;
 
+    &__nav {
+        display: flex;
+        align-items: center;
+    }
+
     &__container {
         display: flex;
         justify-content: space-between;
@@ -13,6 +18,26 @@
 
     &__heading {
         font-size: 4rem;
+    }
+
+    &__link-in {
+        width: 140px;
+        height: 40px;
+        text-decoration: none;
+        pointer-events: visible;
+        font-size: 1.5rem;
+        border-radius: 25px;
+        text-align: center;
+        margin-right: 20px;
+        position: relative;
+
+        &::before {
+            content: "login";
+            position: absolute;
+            top: 30%;
+            text-transform: uppercase;
+            transform: translate(-50%);
+        }
     }
 
     &__link {

@@ -1,17 +1,17 @@
 <template>
   <div>
-    <Form />
+    <SignUpForm />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import Form from '@/components/Form.vue';
+import SignUpForm from '@/components/SignUpForm.vue';
 
 export default defineComponent({
   name: 'SignIn',
   components: {
-    Form,
+    SignUpForm,
   },
 });
 </script>
