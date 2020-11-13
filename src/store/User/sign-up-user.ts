@@ -5,17 +5,19 @@ import {
     VuexModule,
     getModule,
     Action,
-    Mutation
+    Mutation,
+    MutationAction
 } from 'vuex-module-decorators';
 import { SignUpUser } from "../sign-up-user.model";
 import { auth } from "../../firebase/credentials";
+import router from '../../router';
 
 
 @Module({ dynamic: true, store, name: 'User', namespaced: true })
 class SignUpModule extends VuexModule {
     //Loginしているか
     private loggedIn = false;
-    private user: SignUpUser[] | null = [];
+    private loggedInUser: SignUpUser[] | null = [];
     private error: string | null = null;
 
     /**
@@ -25,18 +27,18 @@ class SignUpModule extends VuexModule {
     @Mutation
     public saveSignUpUser(user: SignUpUser) {
         console.log(user);
-        this.user!.push(user);
+        this.loggedInUser!.push(user);
         this.loggedIn = true;
-        console.log(this.user);
+        console.log(this.loggedInUser);
     }
 
     /**
      * エラ〜メッセージをerrorStateに保存
-     * @param error
+     * @param message
      */
     @Mutation
-    public saveError(error: string) {
-        this.error = error;
+    public saveError(message: string) {
+        this.error = message;
     }
 
     /**
@@ -53,60 +55,22 @@ class SignUpModule extends VuexModule {
                     refreshToken: res.user!.refreshToken,
                     uid: res.user!.uid
                 })
+                router.push('/');
             })
             .catch(error => {
-                console.log(error);
-                this.saveError(error);
+                console.log(error.message);
+                this.saveError(error.message);
             });
 
     }
 
-    // @Action
-    // public async signUpUser(
-    //     {
-    //         email,
-    //         password
-    //     }: {
-    //         email: string;
-    //         password: string;
-    //     }) {
-    //     try {
-    //         const res = await axios.post(
-    //             `/accounts:signUp?key=${ process.env.VUE_APP_FIREBASE_API_KEY }`,
-    //             {
-    //                 email: email,
-    //                 password: password,
-    //                 returnSecureToken: true
-    //             }
-    //
-    //         );
-    //         this.saveUser(res.data);
-    //
-    //     } catch (error) {
-    //         throw new error();
-    //     }
-    // }
-
-    @Action
-    public async userDataPush(name: string) {
-        try {
-            const res = await axios.post(
-                'https://throw-money-9c394.firebaseio.com/',
-                {
-                    withCredentials: true,
-                    name: name
-                }
-            );
-            console.log(res);
-
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
-
+    //ログインしているか
     public get loggedInState() {
         return this.loggedIn;
+    }
+    //エラーはあるか
+    public get errorMessage() {
+        return this.error
     }
 
 }
