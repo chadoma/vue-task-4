@@ -1,14 +1,12 @@
 import store from '../index';
-import axios from '../../plugins/axios';
 import {
     Module,
     VuexModule,
     getModule,
     Action,
     Mutation,
-    MutationAction
 } from 'vuex-module-decorators';
-import { SignUpUser } from "../sign-up-user.model";
+import { User } from "../user.model";
 import { auth } from "../../firebase/credentials";
 import router from '../../router';
 
@@ -17,15 +15,15 @@ import router from '../../router';
 class SignUpModule extends VuexModule {
     //Loginしているか
     private loggedIn = false;
-    private loggedInUser: SignUpUser[] | null = [];
+    private loggedInUser: User[] | null = [];
     private error: string | null = null;
 
     /**
-     * サインインしたユーザーを保存
+     * 登録したユーザーを保存
      * @param user
      */
     @Mutation
-    public saveSignUpUser(user: SignUpUser) {
+    public saveSignUpUser(user: User) {
         console.log(user);
         this.loggedInUser!.push(user);
         this.loggedIn = true;
@@ -50,11 +48,12 @@ class SignUpModule extends VuexModule {
         auth.createUserWithEmailAndPassword(email, password)
             .then(res => {
                 // console.log(res);
-                this.saveSignUpUser({
+                const userSignUpAndLogin = {
                     email: res.user!.email,
-                    refreshToken: res.user!.refreshToken,
-                    uid: res.user!.uid
-                })
+                    uid: res.user!.uid,
+                    refreshToken: res.user!.refreshToken
+                }
+                this.saveSignUpUser(userSignUpAndLogin as User)
                 router.push('/');
             })
             .catch(error => {
@@ -62,6 +61,29 @@ class SignUpModule extends VuexModule {
                 this.saveError(error.message);
             });
 
+    }
+
+    /**
+     * ユーザーログイン
+     * param email password
+     */
+    @Action
+    public signInUser({email: email, password: password}: {email: string, password: string}){
+        auth.signInWithEmailAndPassword(email, password)
+            .then(res => {
+                const userLogin = {
+                    email: res.user!.email,
+                    uid: res.user!.uid,
+                    refreshToken: res.user!.refreshToken
+                }
+                this.saveSignUpUser(userLogin as User)
+                console.log(res);
+                router.push('/')
+            })
+            .catch(error=>{
+                console.log(error.message);
+                this.saveError(error.message)
+            })
     }
 
     //ログインしているか

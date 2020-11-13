@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from '@vue/composition-api';
-import { signUpStore } from '../store/User/sign-up-user';
+import { signUpStore } from '../store/User/user';
 
 
 export default defineComponent({
@@ -86,14 +86,12 @@ export default defineComponent({
             password: '',
             password2: '',
             //ユーザー登録
-            signUpUser: async () => {
+            signUpUser:  () => {
                 {
-                    await signUpStore.signUpUser({
+                     signUpStore.signUpUser({
                         email: state.email,
                         password: state.password
                     });
-                    console.log(state.email, state.password);
-
                 }
             },
 
