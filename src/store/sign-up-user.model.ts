@@ -1,9 +1,6 @@
 export interface SignUpUser {
-  email: string;
-  expiresIn: string
-  idToken: string
-  kind: string
-  localId: string
+  email: string | null
   refreshToken: string
+  uid: string
 }
 

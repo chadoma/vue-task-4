@@ -19,7 +19,7 @@
         <input
           id="email"
           v-model.trim="email"
-          type="text"
+          type="email"
           required
           class="register__input"
           autocomplete="off"

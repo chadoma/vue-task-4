@@ -14,8 +14,7 @@
     "baseUrl": "./vue-task4",
     "locale": "ja_JP",
     "types": [
-      "webpack-env",
-      "vue-material"
+      "webpack-env"
     ],
     "paths": {
       "@/*": [

@@ -6,7 +6,7 @@
         <input
           id="email"
           v-model.trim="email"
-          type="text"
+          type="email"
           required
           class="register__input"
           autocomplete="off"
@@ -19,7 +19,7 @@
           <input
             id="pass"
             v-model.trim="password"
-            type="text"
+            type="password"
             required
             class="register__input"
             autocomplete="off"
