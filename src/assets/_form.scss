@@ -1,0 +1,136 @@
+.register {
+    height: 450px;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(12, 1, 17, .3);
+    border-radius: 5px;
+
+    &__left-box {
+        @include box();
+    }
+
+    /*========input===============*/
+    &__data {
+        margin-top: 25px;
+        height: 30px;
+        width: 100%;
+        position: relative;
+    }
+
+    &__input {
+        height: 100%;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid silver;
+        outline: none;
+    }
+
+    &__input:focus ~ &__label,
+    &__input:valid ~ &__label{
+        transform: translateY(-20px);
+        font-size: 1.2rem;
+        color: #1867c0;
+    }
+
+    &__input:focus ~ &__label::after,
+    &__input:valid ~ &__label::after {
+        transform: translateX(0%);
+    }
+
+    &__label {
+        font-size: 1.5rem;
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        color: grey;
+        pointer-events: none;
+        transition: .2s ease;
+    }
+
+    &__underline {
+        position: absolute;
+        bottom: 0;
+        height: 2px;
+        width: 100%;
+    }
+
+    &__underline::before {
+        position: absolute;
+        content: "";
+        height: 100%;
+        width: 100%;
+        background: #206bc3;
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    &__input:focus ~ &__underline::before {
+        transform: scale(1);
+    }
+    /*======== /input ===============*/
+
+
+    &__heading {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: $input-heading-color;
+    }
+
+    &__btn {
+        width: 140px;
+        height: 40px;
+        padding: 5px;
+        margin-top: 30px;
+        border-radius: 2px;
+        text-align: center;
+        outline: none;
+        border: none;
+        text-transform: uppercase;
+        cursor: pointer;
+        background-color: #00E676;
+        color: $color-primary;
+    }
+
+
+    &__right-box {
+        @include box();
+        align-items: center;
+        background-color: rgb(242, 249, 255);
+
+    }
+
+    &__with {
+        font-size: 1.8rem;
+        color: $input-heading-color;
+        text-align: center;
+    }
+
+    &__social-facebook {
+        @include social();
+        margin-top: 40px;
+        background-color: #32508e;
+    }
+
+    &__social-twitter {
+        @include social();
+        background-color: #55acee;
+    }
+
+    &__social-google {
+        @include social();
+        background-color: #dd4b39;
+    }
+
+    &__login {
+        border-top: 1px solid #d0d0d0;
+        font-size: 1.6rem;
+        color: #3e445a;
+        padding-top: 35px;
+    }
+
+}
