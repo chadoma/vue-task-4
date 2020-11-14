@@ -4,30 +4,27 @@ import {
     VuexModule,
     getModule,
     Action,
-    Mutation,
+    Mutation, MutationAction
 } from 'vuex-module-decorators';
-import { User } from "../user.model";
-import { auth } from "../../firebase/credentials";
+import { User, DbUser } from "../user.model";
+import { auth, db } from "../../firebase/credentials";
 import router from '../../router';
 
 
 @Module({ dynamic: true, store, name: 'User', namespaced: true })
 class SignUpModule extends VuexModule {
-    //Loginしているか
-    private loggedIn = false;
+
     private loggedInUser: User[] | null = [];
     private error: string | null = null;
+    spinner = false;
 
     /**
      * 登録したユーザーを保存
      * @param user
      */
     @Mutation
-    public saveSignUpUser(user: User) {
-        console.log(user);
+    saveSignUpAndSignInUser(user: User) {
         this.loggedInUser!.push(user);
-        this.loggedIn = true;
-        console.log(this.loggedInUser);
     }
 
     /**
@@ -35,27 +32,43 @@ class SignUpModule extends VuexModule {
      * @param message
      */
     @Mutation
-    public saveError(message: string) {
+    saveError(message: string) {
         this.error = message;
     }
 
+    @Mutation
+    inspectSpinner(road: boolean) {
+        this.spinner = road;
+    }
+
     /**
-     * ユーザー登録
+     * Authentication, firestore へのユーザー登録
      * param email password
+     * param uid username yen
      */
     @Action
-    public signUpUser({ email: email, password: password }: { email: string, password: string }) {
+    signUpUser({ email, password, username }: { email: string, password: string, username: string }) {
+        const yen = 500;
         auth.createUserWithEmailAndPassword(email, password)
             .then(res => {
-                // console.log(res);
-                const userSignUpAndLogin = {
-                    email: res.user!.email,
-                    uid: res.user!.uid,
-                    refreshToken: res.user!.refreshToken
+                    console.log(res);
+                    const userSignUpAndLogin = {
+                        email: res.user!.email,
+                        uid: res.user!.uid,
+                        yen,
+                        username
+                    };
+                    db.collection('Users').add({
+                        uid: res.user!.uid,
+                        username,
+                        yen
+                    })
+                      .then(doc => {
+                          this.saveSignUpAndSignInUser(userSignUpAndLogin as User);
+                          router.push('dashboard');
+                      });
                 }
-                this.saveSignUpUser(userSignUpAndLogin as User)
-                router.push('/');
-            })
+            )
             .catch(error => {
                 console.log(error.message);
                 this.saveError(error.message);
@@ -68,35 +81,37 @@ class SignUpModule extends VuexModule {
      * param email password
      */
     @Action
-    public signInUser({email: email, password: password}: {email: string, password: string}){
+    signInUser({ email: email, password: password }: { email: string, password: string }) {
         auth.signInWithEmailAndPassword(email, password)
             .then(res => {
                 const userLogin = {
                     email: res.user!.email,
-                    uid: res.user!.uid,
-                    refreshToken: res.user!.refreshToken
-                }
-                this.saveSignUpUser(userLogin as User)
+                    uid: res.user!.uid
+                };
+                this.saveSignUpAndSignInUser(userLogin as User);
                 console.log(res);
-                router.push('/')
+
+                router.push('/dashboard');
             })
-            .catch(error=>{
+            .catch(error => {
                 console.log(error.message);
-                this.saveError(error.message)
-            })
+                this.saveError(error.message);
+            });
     }
 
-    //ログインしているか
-    public get loggedInState() {
-        return this.loggedIn;
-    }
+
+
     //エラーはあるか
-    public get errorMessage() {
-        return this.error
+    get getErrorMessage() {
+        return this.error;
     }
 
+    //ユーザーを取得
+    get getLoggedInUser() {
+        return this.loggedInUser;
+    }
 }
 
 
-export const signUpStore = getModule(SignUpModule);
-console.log(signUpStore.loggedInState);
+export const UserStore = getModule(SignUpModule);
+// console.log(UserStore.loggedInState);
