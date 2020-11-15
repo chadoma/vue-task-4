@@ -84,14 +84,12 @@
     &__btn {
         width: 140px;
         height: 40px;
-        padding: 5px;
         margin-top: 30px;
-        border-radius: 2px;
+        border-radius: 3px;
         text-align: center;
         outline: none;
         border: none;
         text-transform: uppercase;
-        cursor: pointer;
         background-color: #00E676;
         color: $color-primary;
     }
@@ -112,7 +110,7 @@
 
     &__social-facebook {
         @include social();
-        margin-top: 40px;
+        margin-top: 30px;
         background-color: #32508e;
     }
 

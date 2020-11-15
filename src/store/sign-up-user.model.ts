@@ -1,7 +1,6 @@
 export interface SignUpUser {
-  email: string
-  password: string
-  returnSecureToken?: boolean
+  email: string | null
+  refreshToken: string
+  uid: string
 }
-
 

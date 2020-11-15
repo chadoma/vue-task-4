@@ -2,3 +2,11 @@
 @import "navigation";
 @import "typograhy";
 @import "form";
+
+@import "~vue-material/dist/theme/engine"; // Import the theme engine
+
+@include md-register-theme("default", (
+        theme: dark
+));
+
+@import "~vue-material/dist/theme/all"; // Apply the theme
