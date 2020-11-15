@@ -1,26 +1,24 @@
 <template>
-        <div class="dashboard">
-            <div class="dashboard__wrapper">
-                <div class="dashboard__phrase-slider">
-                    <span class="dashboard__phrase">Time&nbsp;is&nbsp;money&nbsp;Be&nbsp;careful&nbsp;not&nbsp;to&nbsp;regret&nbsp;it&nbsp;later.</span>
-                    <span class="dashboard__phrase">Time&nbsp;is&nbsp;money&nbsp;Be&nbsp;careful&nbsp;not&nbsp;to&nbsp;regret&nbsp;it&nbsp;later.</span>
-                </div>
+    <DashBoardWrap>
+        <div class="dashboard__content">
+            <div class="dashboard__heading-container">
+            <h2 class="dashboard__heading-welcome">ようこそ{{ loginUser[0].username }}さん</h2>
+            <h2 class="dashboard__heading-balance">残高: {{ loginUser[0].yen }}</h2>
             </div>
-                <h2 v-if="loginUser">ようこそ{{ loginUser[0].username }}</h2>
-                <ul>
-                    <li v-for="(user, index) in loginUser" :key="index">
-                        {{ user.username }}::: {{ user.yen }}
-                    </li>
-                </ul>
         </div>
+    </DashBoardWrap>
 </template>
 
 <script>
 import { defineComponent, reactive, computed, toRefs } from '@vue/composition-api'
 import { UserStore } from '@/store/User/user';
+import DashBoardWrap from "@/components/DashBoardWrap.vue";
 
 export default defineComponent({
     name: 'DashBoard',
+    components: {
+        DashBoardWrap,
+    },
     setup() {
         const state = reactive({
             loginUser: computed(() => {

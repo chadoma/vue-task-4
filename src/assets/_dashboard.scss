@@ -26,19 +26,46 @@
         text-transform: uppercase;
         font-weight: 600;
         white-space: nowrap;
-        line-height: 40vh;
         opacity: .8;
     }
     &__phrase:first-child {
-        animation: loop 70s -35s linear infinite;
+        animation: loopText 70s -35s linear infinite;
     }
 
     &__phrase:last-child {
-        animation: loop2 70s linear infinite;
+        animation: loopText2 70s linear infinite;
     }
+
+
+    &__content {
+        position: absolute;
+        top: 27%;
+        left: 52%;
+        transform: translate(-50%, -50%);
+        width: 1000px;
+    }
+
+    &__heading-container {
+        display: flex;
+        justify-content: space-between;
+        width: 80%;
+    }
+
+    &__heading-welcome,
+    &__heading-balance {
+        color: #272d3d;
+        font-size: 4rem;
+        font-weight: 500;
+    }
+
+
+
+
 }
 
-@keyframes loop {
+
+
+@keyframes loopText {
     0% {
         transform: translateX(100%);
     }
@@ -47,7 +74,7 @@
     }
 }
 
-@keyframes loop2 {
+@keyframes loopText2 {
     0% {
         transform: translateX(0);
     }
