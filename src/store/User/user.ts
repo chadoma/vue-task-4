@@ -24,10 +24,8 @@ class SignUpModule extends VuexModule {
      */
     @Mutation
     public saveSignUpUser(user: User) {
-        console.log(user);
         this.loggedInUser!.push(user);
         this.loggedIn = true;
-        console.log(this.loggedInUser);
     }
 
     /**
@@ -77,7 +75,6 @@ class SignUpModule extends VuexModule {
                     refreshToken: res.user!.refreshToken
                 }
                 this.saveSignUpUser(userLogin as User)
-                console.log(res);
                 router.push('/')
             })
             .catch(error=>{
@@ -99,4 +96,3 @@ class SignUpModule extends VuexModule {
 
 
 export const signUpStore = getModule(SignUpModule);
-console.log(signUpStore.loggedInState);
