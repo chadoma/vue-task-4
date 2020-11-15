@@ -9,8 +9,6 @@ import {
 import { UserModel } from "../user.model";
 import { auth, db } from "../../firebase/credentials";
 import router from '../../router';
-import { shallowReactive } from "@vue/composition-api";
-import firebase from 'firebase';
 
 
 @Module({ dynamic: true, store, name: 'User', namespaced: true })
@@ -18,7 +16,6 @@ class User extends VuexModule {
 
     private loggedInUser: UserModel[] = [];
     private error: string | null = null;
-    spinner = false;
 
     /**
      * 登録したユーザーを保存
@@ -39,13 +36,18 @@ class User extends VuexModule {
     }
 
     /**
-     * スピナーの有無
-     * @param load
+     * logout ユーザーをlogoutさせる
+     * params uid
      */
     @Mutation
-    inspectSpinner(load: boolean) {
-        this.spinner = load;
+    clearLoginUser(uid: string) {
+        if (uid) {
+            const user = this.loggedInUser.findIndex(user => user.uid === uid);
+            this.loggedInUser.splice(user, 1);
+            router.push('/sign-up');
+        }
     }
+
 
     /**
      * Authentication, firestore へのユーザー登録 ログイン
@@ -103,8 +105,22 @@ class User extends VuexModule {
             .collection('Users')
             .where('uid', '==', userLoginId)
             .get();
-        this.saveSignUpAndSignInUser(querySnapshot.docs[0].data())
-        await router.push('/dashboard')
+        this.saveSignUpAndSignInUser(querySnapshot.docs[0].data());
+        await router.push('/dashboard');
+    }
+
+    /**
+     * logout ユーザーをlogoutさせる
+     * params uid
+     */
+    @Action
+    clearUser(uid: string) {
+        auth.onAuthStateChanged(user => {
+            auth.signOut().then(() => {
+                this.clearLoginUser(uid);
+            })
+                .catch(error => console.log(error))
+        });
     }
 
 
@@ -126,4 +142,3 @@ class User extends VuexModule {
 
 
 export const UserStore = getModule(User);
-// console.log(UserStore.loggedInState);

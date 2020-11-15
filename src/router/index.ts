@@ -5,6 +5,9 @@ import SignIn from '@/views/SignIn.vue';
 import SignUp from '@/views/SignUp.vue';
 import DashBoard from '@/views/DashBoard.vue';
 import NotFound from '@/views/NotFound.vue';
+import {auth} from "../firebase/credentials";
+import { UserStore } from "../store/User/user";
+
 
 Vue.use(VueRouter);
 
@@ -14,8 +17,8 @@ const routes: Array<RouteConfig> = [
     name: 'Home',
     component: Home,
     meta: {
-      title: 'Home',
-    },
+      title: 'home',
+    }
   },
   {
     path: '/sign-in',
@@ -39,6 +42,7 @@ const routes: Array<RouteConfig> = [
     component: DashBoard,
     meta: {
       title: 'SignUp',
+      requireAuth: true
     },
   },
   {
@@ -57,6 +61,21 @@ const router = new VueRouter({
   routes,
 });
 
+
+//login後でないと、dashboardにアクセスできない
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.requireAuth)){
+      const user = auth.currentUser
+      if (!user) {
+        next({path: '/sign-up'})
+      }
+      next()
+  } else {
+    next()
+  }
+})
+
+//各々のタイトル
 router.afterEach(to => {
   if (!to.meta.title) {
     return;
