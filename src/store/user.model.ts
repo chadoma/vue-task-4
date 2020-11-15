@@ -1,9 +1,6 @@
-export interface User {
-    email: string
+export interface UserModel {
+    email: string | null
     uid: string
-}
-
-export interface DbUser extends User{
     username: string
     yen: number
 }

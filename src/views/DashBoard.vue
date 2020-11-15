@@ -1,6 +1,16 @@
 <template>
-    <div>
-        <h2 v-if="loginUser">ようこそ{{ loginUser[0].email }}</h2>
+    <div class="dashboard">
+        <div class="dashboard__wrapper">
+            <div class="dashboard__phrase-slider">
+                <span class="dashboard__phrase">Time&nbsp;is&nbsp;money&nbsp;Be&nbsp;careful&nbsp;not&nbsp;to&nbsp;regret&nbsp;it&nbsp;later.</span>
+            </div>
+            <h2 v-if="loginUser">ようこそ{{ loginUser[0].username }}</h2>
+            <ul>
+                <li v-for="(user, index) in loginUser" :key="index">
+                    {{ user.username }}::: {{ user.yen }}
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -9,10 +19,11 @@ import { defineComponent, reactive, computed, toRefs } from '@vue/composition-ap
 import { UserStore } from '@/store/User/user';
 
 export default defineComponent({
+    name: 'DashBoard',
     setup() {
         const state = reactive({
             loginUser: computed(() => {
-               return UserStore.getLoggedInUser
+                return UserStore.getLoggedInUser
             })
         })
         return {
@@ -23,10 +34,4 @@ export default defineComponent({
 })
 </script>
 
-<!--TODO
-loginしたユーザー配列を取得してくる
--->
 
-<!--TODO
-loginしたユーザーを表示
--->
