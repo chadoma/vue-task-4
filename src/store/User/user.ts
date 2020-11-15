@@ -39,7 +39,7 @@ class User extends VuexModule {
     }
 
     /**
-     * スピンナーの有無
+     * スピナーの有無
      * @param load
      */
     @Mutation
@@ -57,7 +57,6 @@ class User extends VuexModule {
         const yen = 500;
         auth.createUserWithEmailAndPassword(email, password)
             .then(res => {
-                    console.log(res);
                     const userSignUpAndLogin = {
                         email: res.user!.email,
                         uid: res.user!.uid,
@@ -66,7 +65,6 @@ class User extends VuexModule {
                     };
                     db.collection('Users').add(userSignUpAndLogin)
                       .then(doc => {
-
                           this.saveSignUpAndSignInUser(userSignUpAndLogin);
                           router.push('dashboard');
                       });
@@ -88,10 +86,7 @@ class User extends VuexModule {
         auth.signInWithEmailAndPassword(email, password)
             .then(res => {
                 const userLoginId = res.user!.uid;
-                console.log(res.user!.uid);
                 this.getDbUser(userLoginId);
-                // this.saveSignUpAndSignInUser(userLogin as User);
-                // router.push('/dashboard');
             })
             .catch(error => {
                 console.log(error.message);
@@ -108,7 +103,6 @@ class User extends VuexModule {
             .collection('Users')
             .where('uid', '==', userLoginId)
             .get();
-        console.log(querySnapshot.docs[0].data());
         this.saveSignUpAndSignInUser(querySnapshot.docs[0].data())
         await router.push('/dashboard')
     }

@@ -16,31 +16,43 @@
     }
 
     &__phrase-slider {
-        width: 50%;
-        position: relative;
-
+        width: 100vh;
+        display: flex;
     }
 
     &__phrase {
-        position: absolute;
-        left: 0;
-        top: 0;
         font-size: 10em;
-        color: orangered;
+        color: #272d3d;
         text-transform: uppercase;
-        font-weight: 700;
+        font-weight: 600;
         white-space: nowrap;
         line-height: 40vh;
-        animation: animate 60s linear infinite;
+        opacity: .8;
+    }
+    &__phrase:first-child {
+        animation: loop 70s -35s linear infinite;
+    }
+
+    &__phrase:last-child {
+        animation: loop2 70s linear infinite;
     }
 }
 
-@keyframes animate {
+@keyframes loop {
+    0% {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes loop2 {
     0% {
         transform: translateX(0);
     }
-    100% {
-        transform: translateX(-100%);
+    to {
+        transform: translateX(-200%);
     }
 }
 
