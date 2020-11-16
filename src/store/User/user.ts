@@ -1,11 +1,5 @@
 import store from '../index';
-import {
-    Module,
-    VuexModule,
-    getModule,
-    Action,
-    Mutation, MutationAction
-} from 'vuex-module-decorators';
+import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import { DbUser, UserModel } from "../user.model";
 import { auth, db } from "../../firebase/credentials";
 import router from '../../router';
@@ -30,7 +24,6 @@ class User extends VuexModule {
     @Mutation
     saveDbUsers(dbUsers: DbUser){
         this.dbUsers.push(dbUsers);
-        console.log(this.dbUsers);
     }
 
     /**
@@ -165,7 +158,8 @@ class User extends VuexModule {
     }
 
     get getUsers() {
-        return this.dbUsers;
+        const userUid = this.loggedInUser[0].uid;
+        return this.dbUsers.filter(user => user.uid !== userUid);
     }
 
     //ログインしているか？

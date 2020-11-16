@@ -5,7 +5,7 @@ import store from './store';
 import VueCompositionAPI from '@vue/composition-api';
 require('@/assets/main.scss');
 // import VueMaterial from 'vue-material'
-import { MdButton, MdContent, MdTabs, MdDialog  } from 'vue-material/dist/components'
+import { MdButton, MdContent, MdTabs, MdDialog, MdField  } from 'vue-material/dist/components'
 import "vue-material/dist/vue-material.min.css";
 import 'vue-material/dist/theme/default.css'
 
@@ -17,7 +17,7 @@ Vue.use(MdButton)
 Vue.use(MdContent)
 Vue.use(MdTabs)
 Vue.use(MdDialog)
-
+Vue.use(MdField)
 
 new Vue({
   router,
