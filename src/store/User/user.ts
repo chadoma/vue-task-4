@@ -25,7 +25,6 @@ class User extends VuexModule {
     @Mutation
     saveSignUpAndSignInUser(user: UserModel) {
         this.loggedInUser!.push(user);
-        console.log(this.loggedInUser);
     }
 
     @Mutation
@@ -116,7 +115,6 @@ class User extends VuexModule {
             .where('uid', '==', userLoginId)
             .get();
         const userSignUpAndLogin = querySnapshot.docs[0].data()
-        console.log(userSignUpAndLogin);
         this.saveSignUpAndSignInUser(userSignUpAndLogin as UserModel);
         await router.push('/dashboard');
     }
@@ -169,8 +167,6 @@ class User extends VuexModule {
     get getUsers() {
         return this.dbUsers;
     }
-
-
 
     //ログインしているか？
     get loggedInUserState() {
