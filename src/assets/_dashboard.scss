@@ -39,23 +39,32 @@
 
     &__content {
         position: absolute;
-        top: 27%;
-        left: 52%;
+        top: 35%;
+        left: 55%;
         transform: translate(-50%, -50%);
-        width: 1000px;
+        width: 700px;
     }
 
     &__heading-container {
         display: flex;
         justify-content: space-between;
-        width: 80%;
+        align-items: center;
     }
 
     &__heading-welcome,
     &__heading-balance {
         color: #272d3d;
-        font-size: 4rem;
+        font-size: 3.5rem;
         font-weight: 500;
+    }
+
+    &__heading-balance {
+        margin-left: 150px;
+    }
+
+    &__btn {
+        background-color: #43435a;
+        opacity: .9;
     }
 
 

@@ -1,0 +1,30 @@
+.user {
+    &__heading {
+        margin-top: 3rem;
+        font-size: 4rem;
+        text-align: center;
+        color: #272d3d;
+        opacity: .9;
+    }
+
+    &__users {
+        list-style: none;
+        font-size: 2rem;
+        font-weight: 400;
+        color: #3e445a;
+    }
+
+    &__user-name {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 1.5rem 0;
+    }
+
+    &__btn-watch,
+    &__btn-send {
+        background-color: #00E676;
+        color: $color-primary;
+    }
+
+}

@@ -5,3 +5,8 @@ export interface UserModel {
     yen: number
 }
 
+export interface DbUser {
+    uid: string,
+    username: string,
+    yen: number
+}
