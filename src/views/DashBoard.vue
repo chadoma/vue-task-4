@@ -6,14 +6,14 @@
                 <h2 class="dashboard__heading-balance">残高: {{ loginUser[0].yen }}</h2>
                 <md-button class="dashboard__btn" @click="logOutUser" v-show="loginUser">ログアウトする</md-button>
             </div>
-            <UserList :users="dbUsers" :loginUser="loginUser"/>
+            <UserList :users="dbUsers" :loginUser="loginUser" />
         </div>
 
     </DashBoardWrap>
 </template>
 
-<script>
-import { defineComponent, reactive, computed, toRefs } from '@vue/composition-api'
+<script lang="ts">
+import { defineComponent, reactive, computed, toRefs, watch } from '@vue/composition-api'
 import { UserStore } from '@/store/User/user';
 import DashBoardWrap from "@/components/DashBoardWrap.vue";
 import UserList from "@/components/UserList.vue";
@@ -26,6 +26,7 @@ export default defineComponent({
     },
     setup() {
         const state = reactive({
+            userPayment: null as number | null,
             loginUser: computed(() => {
                 return UserStore.getLoggedInUser
             }),
@@ -41,9 +42,8 @@ export default defineComponent({
                 }
             }
         })
-
         return {
-            ...toRefs(state)
+            ...toRefs(state),
         }
     }
 

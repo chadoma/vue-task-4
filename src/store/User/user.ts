@@ -21,6 +21,10 @@ class User extends VuexModule {
         this.loggedInUser!.push(user);
     }
 
+    /**
+     * データベースのユーザーを保存
+     * @param dbUsers
+     */
     @Mutation
     saveDbUsers(dbUsers: DbUser){
         this.dbUsers.push(dbUsers);
@@ -146,7 +150,6 @@ class User extends VuexModule {
             .catch(error => console.log(error))
     }
 
-
     //エラーはあるか
     get getErrorMessage() {
         return this.error;
@@ -163,9 +166,15 @@ class User extends VuexModule {
     }
 
     //ログインしているか？
-    get loggedInUserState() {
+    get getLoggedInUserState() {
         return this.loggedInUser.length > 0;
     }
+
+    //ログインユーザーのyenを取得
+    get getLoggedInUserPayment(){
+        return this.loggedInUser[0].yen
+    }
+
 }
 
 

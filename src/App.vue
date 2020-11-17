@@ -17,7 +17,7 @@ export default defineComponent({
     },
     setup(){
       const displayNavigation = computed(()=>{
-          return UserStore.loggedInUserState
+          return UserStore.getLoggedInUserState
       })
         return {
           displayNavigation,

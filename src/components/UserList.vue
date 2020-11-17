@@ -31,17 +31,17 @@
                 <label>数字を入力してください</label>
                 <md-input v-model="pay"></md-input>
             </md-field>
-            <md-button @click="sendPayment" class="input-button">送信</md-button>
+            <md-button @click="sendPayment(uid)"  class="input-button">送信</md-button>
         </div>
         </md-dialog>
-
 
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from "@vue/composition-api";
-import { DbUser, UserModel } from "../store/user.model";
+import { defineComponent, reactive, toRefs, watch } from "@vue/composition-api";
+import { UserModel } from "../store/user.model";
+import { UserStore } from "../store/User/user";
 
 
 export default defineComponent({
@@ -58,9 +58,8 @@ export default defineComponent({
             showWalletDialog: false,
             showPaymentDialog: false,
             userWallet: null as number | null,
-            myWallet: null as number | null,
             pay: null as number | null,
-
+            openUserUid: null as number | null,
             isOpenUserWallet: (id: string) => {
                 const targetUser: UserModel = props.users!.findIndex((user) => user.uid === id);
                 state.userWallet = (props.users![targetUser]).yen;
@@ -68,20 +67,29 @@ export default defineComponent({
                 state.showWalletDialog = true;
             },
             isOpenUserPayment: (id: string) => {
+                state.openUserUid = id;
                 const targetUser: UserModel = props.users!.findIndex((user) => user.uid === id);
                 state.userWallet = (props.users![targetUser]).yen;
                 state.showPaymentDialog = true
             },
-            sendPayment: () => {
-                // eslint-disable-next-line no-constant-condition
-               if (typeof Number(state.pay)) {
-                   console.log(state.pay);
-               }
+            sendPayment: (id: string) => {
+                //ユーザーの入力値が整数
+                const stateNum = Number(state.pay)
+                if (Number.isInteger(stateNum)) {
+                    // eslint-disable-next-line no-irregular-whitespace
+                    // ユーザー残高　- 送金額
+                    // const calcNum = [props.loginUser[0].yen, stateNum].reduce((acc, cur)=> acc - cur)
+                    console.log(props.loginUser[0].username);
+                    console.log(props.users);
+                }
+                //相手のIDとつ紐付け
+                //watcher作成
             },
             resetUser: () => {
                 state.userWallet = null;
                 state.userName = '';
-            }
+            },
+
         });
         return {
             ...toRefs(state)
