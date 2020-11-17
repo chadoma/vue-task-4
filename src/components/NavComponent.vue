@@ -14,14 +14,5 @@
 import { defineComponent } from '@vue/composition-api';
 
 
-export default defineComponent({
-    setup() {
-        const signInUser = () => {
-            console.log('aaa');
-        };
-        return {
-            signInUser
-        };
-    }
-});
+export default defineComponent({ });
 </script>

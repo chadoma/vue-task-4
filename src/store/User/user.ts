@@ -4,13 +4,11 @@ import {
     VuexModule,
     getModule,
     Action,
-    Mutation, MutationAction
+    Mutation
 } from 'vuex-module-decorators';
 import { UserModel } from "../user.model";
 import { auth, db } from "../../firebase/credentials";
 import router from '../../router';
-import { shallowReactive } from "@vue/composition-api";
-import firebase from 'firebase';
 
 
 @Module({ dynamic: true, store, name: 'User', namespaced: true })
@@ -18,14 +16,13 @@ class User extends VuexModule {
 
     private loggedInUser: UserModel[] = [];
     private error: string | null = null;
-    spinner = false;
 
     /**
      * 登録したユーザーを保存
      * @param user
      */
     @Mutation
-    saveSignUpAndSignInUser(user: any) {
+    saveSignUpAndSignInUser(user: UserModel) {
         this.loggedInUser!.push(user);
     }
 
@@ -36,15 +33,6 @@ class User extends VuexModule {
     @Mutation
     saveError(message: string) {
         this.error = message;
-    }
-
-    /**
-     * スピナーの有無
-     * @param load
-     */
-    @Mutation
-    inspectSpinner(load: boolean) {
-        this.spinner = load;
     }
 
     /**
@@ -103,7 +91,7 @@ class User extends VuexModule {
             .collection('Users')
             .where('uid', '==', userLoginId)
             .get();
-        this.saveSignUpAndSignInUser(querySnapshot.docs[0].data())
+        this.saveSignUpAndSignInUser(querySnapshot.docs[0].data() as UserModel)
         await router.push('/dashboard')
     }
 
@@ -126,4 +114,3 @@ class User extends VuexModule {
 
 
 export const UserStore = getModule(User);
-// console.log(UserStore.loggedInState);
