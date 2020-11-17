@@ -25,8 +25,10 @@ class User extends VuexModule {
      * @param user
      */
     @Mutation
+    dev/dashboard
     saveSignUpAndSignInUser(user: any) {
         this.loggedInUser!.push(user);
+
     }
 
     /**
@@ -85,8 +87,10 @@ class User extends VuexModule {
     signInUser({ email: email, password: password }: { email: string, password: string }) {
         auth.signInWithEmailAndPassword(email, password)
             .then(res => {
+     dev/dashboard
                 const userLoginId = res.user!.uid;
                 this.getDbUser(userLoginId);
+
             })
             .catch(error => {
                 console.log(error.message);
@@ -124,6 +128,7 @@ class User extends VuexModule {
     }
 }
 
-
+dev/dashboard
 export const UserStore = getModule(User);
 // console.log(UserStore.loggedInState);
+
