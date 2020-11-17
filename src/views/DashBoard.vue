@@ -6,7 +6,7 @@
                 <h2 class="dashboard__heading-balance">残高: {{ loginUser[0].yen }}</h2>
                 <md-button class="dashboard__btn" @click="logOutUser" v-show="loginUser">ログアウトする</md-button>
             </div>
-            <UserList :users="dbUsers"/>
+            <UserList :users="dbUsers" :loginUser="loginUser"/>
         </div>
 
     </DashBoardWrap>

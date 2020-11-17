@@ -23,7 +23,7 @@
 
         <md-dialog class="md-accent dialog" :md-active.sync="showPaymentDialog">
             <md-dialog-title class="md-primary dialog__title">
-                あなたの残高: {{userWallet}}<br />
+                あなたの残高: {{loginUser[0].yen}}<br />
                 <span>送る金額</span>
             </md-dialog-title>
         <div class="input-content">
@@ -48,6 +48,9 @@ export default defineComponent({
     props: {
         users: {
             type: Array
+        },
+        loginUser: {
+            type: Array
         }
     },
     setup(props) {
@@ -55,8 +58,9 @@ export default defineComponent({
             showWalletDialog: false,
             showPaymentDialog: false,
             userWallet: null as number | null,
-            userName: '',
+            myWallet: null as number | null,
             pay: null as number | null,
+
             isOpenUserWallet: (id: string) => {
                 const targetUser: UserModel = props.users!.findIndex((user) => user.uid === id);
                 state.userWallet = (props.users![targetUser]).yen;
@@ -64,7 +68,7 @@ export default defineComponent({
                 state.showWalletDialog = true;
             },
             isOpenUserPayment: (id: string) => {
-                const targetUser = props.users!.findIndex((user) => user.uid === id);
+                const targetUser: UserModel = props.users!.findIndex((user) => user.uid === id);
                 state.userWallet = (props.users![targetUser]).yen;
                 state.showPaymentDialog = true
             },
