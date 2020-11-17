@@ -41,8 +41,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from "@vue/composition-api";
-import { DbUser } from "../store/user.model";
-import { mapGetters } from "vuex";
+import { DbUser, UserModel } from "../store/user.model";
 
 
 export default defineComponent({
@@ -56,17 +55,17 @@ export default defineComponent({
             showWalletDialog: false,
             showPaymentDialog: false,
             userWallet: null as number | null,
-            userName: '' as string,
-            pay: null as number | string | null,
+            userName: '',
+            pay: null as number | null,
             isOpenUserWallet: (id: string) => {
-                const targetUser = props.users!.findIndex((user: any) => user.uid === id);
-                state.userWallet = (props.users![targetUser] as DbUser).yen;
-                state.userName = (props.users![targetUser] as DbUser).username;
+                const targetUser: UserModel = props.users!.findIndex((user) => user.uid === id);
+                state.userWallet = (props.users![targetUser]).yen;
+                state.userName = (props.users![targetUser]).username;
                 state.showWalletDialog = true;
             },
             isOpenUserPayment: (id: string) => {
-                const targetUser = props.users!.findIndex((user: any) => user.uid === id);
-                state.userWallet = (props.users![targetUser] as DbUser).yen;
+                const targetUser = props.users!.findIndex((user) => user.uid === id);
+                state.userWallet = (props.users![targetUser]).yen;
                 state.showPaymentDialog = true
             },
             sendPayment: () => {

@@ -81,10 +81,10 @@ import { UserStore } from '../store/User/user';
 export default defineComponent({
     setup() {
         const state = reactive({
-            username: '' as string,
-            email: '' as string,
-            password: '' as string,
-            password2: '' as string,
+            username: '',
+            email: '',
+            password: '',
+            password2: '',
             //ユーザー登録
             signUpUser: () => {
                 {

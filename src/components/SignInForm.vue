@@ -46,8 +46,8 @@ import { UserStore } from '../store/User/user';
 export default defineComponent({
     setup() {
         const state = reactive({
-            email: '' as string,
-            password: '' as string,
+            email: '',
+            password: '',
 
             signInUser: () => {
                 {

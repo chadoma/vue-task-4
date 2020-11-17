@@ -6,7 +6,6 @@ import SignUp from '@/views/SignUp.vue';
 import DashBoard from '@/views/DashBoard.vue';
 import NotFound from '@/views/NotFound.vue';
 import {auth} from "../firebase/credentials";
-import { UserStore } from "../store/User/user";
 
 
 Vue.use(VueRouter);
