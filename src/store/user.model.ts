@@ -1,5 +1,5 @@
 export interface UserModel {
-    email: string | null
+    email: string
     uid: string
     username: string
     yen: number

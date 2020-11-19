@@ -15,13 +15,13 @@ export default defineComponent({
     components: {
         NavComponent
     },
-    setup(){
-      const displayNavigation = computed(()=>{
-          return UserStore.loggedInUserState
-      })
-        return {
-          displayNavigation,
-        }
+    setup() {
+        const displayNavigation = computed(() => {
+            return UserStore.loggedInUserState;
+        });
+            return {
+            displayNavigation
+        };
     }
 
 });

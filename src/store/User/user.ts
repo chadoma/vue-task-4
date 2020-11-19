@@ -45,8 +45,8 @@ class User extends VuexModule {
         const yen = 500;
         auth.createUserWithEmailAndPassword(email, password)
             .then(res => {
-                    const userSignUpAndLogin = {
-                        email: res.user!.email,
+                    const userSignUpAndLogin:UserModel = {
+                        email: res.user!.email!,
                         uid: res.user!.uid,
                         yen,
                         username
@@ -70,7 +70,7 @@ class User extends VuexModule {
      * param email password
      */
     @Action
-    signInUser({ email: email, password: password }: { email: string, password: string }) {
+    signInUser({ email, password }: { email: string, password: string }) {
         auth.signInWithEmailAndPassword(email, password)
             .then(res => {
                 const userLoginId = res.user!.uid;

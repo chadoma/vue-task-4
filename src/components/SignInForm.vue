@@ -61,7 +61,6 @@ export default defineComponent({
             displayButton: computed((): boolean =>{
                 if (!state.email.includes('@')) return true
                 return state.password.length <= 5;
-
             }),
 
             displayError: computed(() => {

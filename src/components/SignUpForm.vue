@@ -55,7 +55,7 @@
                 <div class="register__underline"></div>
             </div>
 
-            <md-button class="register__btn md-light" :disabled="!displayButton" type="submit">登録する</md-button>
+            <md-button class="register__btn md-light" :disabled="displayButton" type="submit">登録する</md-button>
             <span class="danger">{{ displayError }}</span>
 
 
@@ -95,14 +95,12 @@ export default defineComponent({
                     });
                 }
             },
-
             displayButton: computed((): boolean => {
-                if (state.email.includes('@')) {
+                if (!state.email.includes('@')) {
                     return true;
                 }
                 return !(state.password === state.password2 && state.password !== '' && state.password.length > 5);
             }),
-
             displayError: computed(() => {
                 return UserStore.getErrorMessage;
             })
