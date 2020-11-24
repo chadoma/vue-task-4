@@ -44,7 +44,7 @@
             <div class="register__data">
                 <input
                     id="pass2"
-                    v-model.trim="password2"
+                    v-model.trim="confirmPassword"
                     type="text"
                     required
                     class="register__input"
@@ -84,7 +84,7 @@ export default defineComponent({
             username: '',
             email: '',
             password: '',
-            password2: '',
+            confirmPassword: '',
             //ユーザー登録
             signUpUser: () => {
                 {
@@ -96,20 +96,25 @@ export default defineComponent({
                 }
             },
             displayButton: computed((): boolean => {
-                if (!state.email.includes('@')) {
-                    return true;
-                }
-                return !(state.password === state.password2 && state.password !== '' && state.password.length > 5);
+                // eslint-disable-next-line @typescript-eslint/no-use-before-define
+                return !isValidEmail(state.email) || isValidPassword(state.password, state.confirmPassword);
             }),
             displayError: computed(() => {
                 return UserStore.getErrorMessage;
-            })
-
+            }),
         });
-
-        return {
-            ...toRefs(state)
-        };
+            const isValidEmail = (email: string): boolean =>{
+                const emailReg = /^[a-zA-Z0-9.!#$%&'*+\n/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+                return emailReg.test(email)
+            }
+            const isValidPassword = (password: string, confirmPassword: string): boolean =>{
+                return !(password === confirmPassword && password !== '' && password.length > 5);
+            }
+                return {
+                ...toRefs(state),
+                isValidEmail,
+                isValidPassword
+            };
     }
 });
 </script>
