@@ -76,10 +76,12 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from '@vue/composition-api';
 import { UserStore } from '../store/User/user';
+import { useValidator } from "../util-function/authValidation";
 
 
 export default defineComponent({
     setup() {
+        const { isValidEmail, isValidPassword } = useValidator();
         const state = reactive({
             username: '',
             email: '',
@@ -96,25 +98,15 @@ export default defineComponent({
                 }
             },
             displayButton: computed((): boolean => {
-                // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 return !isValidEmail(state.email) || isValidPassword(state.password, state.confirmPassword);
             }),
             displayError: computed(() => {
                 return UserStore.getErrorMessage;
-            }),
+            })
         });
-            const isValidEmail = (email: string): boolean =>{
-                const emailReg = /^[a-zA-Z0-9.!#$%&'*+\n/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-                return emailReg.test(email)
-            }
-            const isValidPassword = (password: string, confirmPassword: string): boolean =>{
-                return !(password === confirmPassword && password !== '' && password.length > 5);
-            }
                 return {
-                ...toRefs(state),
-                isValidEmail,
-                isValidPassword
-            };
+                    ...toRefs(state)
+        };
     }
 });
 </script>
