@@ -1,16 +1,28 @@
 <template>
-  <div id="app">
-    <NavComponent />
-    <router-view />
-  </div>
+    <div id="app">
+        <NavComponent v-if="!displayNavigation" />
+        <router-view />
+    </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { computed, defineComponent } from '@vue/composition-api';
 import NavComponent from '@/components/NavComponent.vue';
+import { UserStore } from "./store/User/user";
+
+
 export default defineComponent({
-  components: {
-    NavComponent,
-  },
+    components: {
+        NavComponent
+    },
+    setup() {
+        const displayNavigation = computed(() => {
+            return UserStore.loggedInUserState;
+        });
+            return {
+            displayNavigation
+        };
+    }
+
 });
 </script>

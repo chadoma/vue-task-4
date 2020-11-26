@@ -1,5 +1,7 @@
-export interface User {
+export interface UserModel {
     email: string
     uid: string
-    refreshToken: string
+    username: string
+    yen: number
 }
+

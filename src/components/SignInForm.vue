@@ -29,7 +29,7 @@
                     <div class="register__underline"></div>
                 </div>
 
-                <md-button class="register__btn md-light" type="submit">ログインする</md-button>
+                <md-button class="register__btn md-light" :disabled="displayButton" type="submit">ログインする</md-button>
                 <div>
                     <span class="danger">{{ displayError }}</span>
                 </div>
@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from '@vue/composition-api';
-import { signUpStore } from '../store/User/user';
+import { UserStore } from '../store/User/user';
 
 
 export default defineComponent({
@@ -51,15 +51,20 @@ export default defineComponent({
 
             signInUser: () => {
                 {
-                    signUpStore.signInUser({
+                    UserStore.signInUser({
                         email: state.email,
                         password: state.password
                     });
                 }
             },
 
+            displayButton: computed((): boolean =>{
+                if (!state.email.includes('@')) return true
+                return state.password.length <= 5;
+            }),
+
             displayError: computed(() => {
-                return signUpStore.errorMessage;
+                return UserStore.getErrorMessage;
             })
 
 

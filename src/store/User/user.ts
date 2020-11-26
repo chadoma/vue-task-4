@@ -4,18 +4,17 @@ import {
     VuexModule,
     getModule,
     Action,
-    Mutation,
+    Mutation
 } from 'vuex-module-decorators';
-import { User } from "../user.model";
-import { auth } from "../../firebase/credentials";
+import { UserModel } from "../user.model";
+import { auth, db } from "../../firebase/credentials";
 import router from '../../router';
 
 
 @Module({ dynamic: true, store, name: 'User', namespaced: true })
-class SignUpModule extends VuexModule {
-    //Loginしているか
-    private loggedIn = false;
-    private loggedInUser: User[] | null = [];
+class User extends VuexModule {
+
+    private loggedInUser: UserModel[] = [];
     private error: string | null = null;
 
     /**
@@ -23,9 +22,8 @@ class SignUpModule extends VuexModule {
      * @param user
      */
     @Mutation
-    public saveSignUpUser(user: User) {
+    saveSignUpAndSignInUser(user: UserModel) {
         this.loggedInUser!.push(user);
-        this.loggedIn = true;
     }
 
     /**
@@ -33,27 +31,33 @@ class SignUpModule extends VuexModule {
      * @param message
      */
     @Mutation
-    public saveError(message: string) {
+    saveError(message: string) {
         this.error = message;
     }
 
     /**
-     * ユーザー登録
+     * Authentication, firestore へのユーザー登録 ログイン
      * param email password
+     * param uid username yen
      */
     @Action
-    public signUpUser({ email: email, password: password }: { email: string, password: string }) {
+    signUpUser({ email, password, username }: { email: string, password: string, username: string }) {
+        const yen = 500;
         auth.createUserWithEmailAndPassword(email, password)
             .then(res => {
-                // console.log(res);
-                const userSignUpAndLogin = {
-                    email: res.user!.email,
-                    uid: res.user!.uid,
-                    refreshToken: res.user!.refreshToken
+                    const userSignUpAndLogin:UserModel = {
+                        email: res.user!.email!,
+                        uid: res.user!.uid,
+                        yen,
+                        username
+                    };
+                    db.collection('Users').add(userSignUpAndLogin)
+                      .then(doc => {
+                          this.saveSignUpAndSignInUser(userSignUpAndLogin);
+                          router.push('dashboard');
+                      });
                 }
-                this.saveSignUpUser(userSignUpAndLogin as User)
-                router.push('/');
-            })
+            )
             .catch(error => {
                 console.log(error.message);
                 this.saveError(error.message);
@@ -66,33 +70,47 @@ class SignUpModule extends VuexModule {
      * param email password
      */
     @Action
-    public signInUser({email: email, password: password}: {email: string, password: string}){
+    signInUser({ email, password }: { email: string, password: string }) {
         auth.signInWithEmailAndPassword(email, password)
             .then(res => {
-                const userLogin = {
-                    email: res.user!.email,
-                    uid: res.user!.uid,
-                    refreshToken: res.user!.refreshToken
-                }
-                this.saveSignUpUser(userLogin as User)
-                router.push('/')
+                const userLoginId = res.user!.uid;
+                this.getDbUser(userLoginId);
             })
-            .catch(error=>{
+            .catch(error => {
                 console.log(error.message);
-                this.saveError(error.message)
-            })
+                this.saveError(error.message);
+            });
     }
 
-    //ログインしているか
-    public get loggedInState() {
-        return this.loggedIn;
+    /**
+     * loginユーザーのDBデータ取得
+     */
+    @Action
+    async getDbUser(userLoginId: string) {
+        const querySnapshot = await db
+            .collection('Users')
+            .where('uid', '==', userLoginId)
+            .get();
+        this.saveSignUpAndSignInUser(querySnapshot.docs[0].data() as UserModel)
+        await router.push('/dashboard')
     }
+
+
     //エラーはあるか
-    public get errorMessage() {
-        return this.error
+    get getErrorMessage() {
+        return this.error;
     }
 
+    //ユーザーを取得
+    get getLoggedInUser() {
+        return this.loggedInUser;
+    }
+
+    //ログインしているか？
+    get loggedInUserState() {
+        return this.loggedInUser.length > 0;
+    }
 }
 
 
-export const signUpStore = getModule(SignUpModule);
+export const UserStore = getModule(User);

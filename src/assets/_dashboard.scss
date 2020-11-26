@@ -1,0 +1,95 @@
+.dashboard {
+    width: 100%;
+    height: 1000px;
+    background-color: #ffd952;
+    position: relative;
+
+    &__wrapper {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='white' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        animation: unBgAnime 1500s ease-out infinite;
+    }
+
+    &__phrase-slider {
+        width: 100vh;
+        display: flex;
+    }
+
+    &__phrase {
+        font-size: 10em;
+        color: #272d3d;
+        text-transform: uppercase;
+        font-weight: 600;
+        white-space: nowrap;
+        opacity: .8;
+    }
+    &__phrase:first-child {
+        animation: loopText 70s -35s linear infinite;
+    }
+
+    &__phrase:last-child {
+        animation: loopText2 70s linear infinite;
+    }
+
+
+    &__content {
+        position: absolute;
+        top: 27%;
+        left: 52%;
+        transform: translate(-50%, -50%);
+        width: 1000px;
+    }
+
+    &__heading-container {
+        display: flex;
+        justify-content: space-between;
+        width: 80%;
+    }
+
+    &__heading-welcome,
+    &__heading-balance {
+        color: #272d3d;
+        font-size: 4rem;
+        font-weight: 500;
+    }
+
+
+
+
+}
+
+
+
+@keyframes loopText {
+    0% {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes loopText2 {
+    0% {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-200%);
+    }
+}
+
+
+
+@keyframes unBgAnime {
+   0% {
+       background-position-x: 0;
+   }
+    100% {
+        background-position-x: -2000%;
+    }
+}

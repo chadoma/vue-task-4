@@ -44,7 +44,7 @@
             <div class="register__data">
                 <input
                     id="pass2"
-                    v-model.trim="password2"
+                    v-model.trim="confirmPassword"
                     type="text"
                     required
                     class="register__input"
@@ -55,7 +55,7 @@
                 <div class="register__underline"></div>
             </div>
 
-            <md-button class="register__btn md-light" type="submit">登録する</md-button>
+            <md-button class="register__btn md-light" :disabled="displayButton" type="submit">登録する</md-button>
             <span class="danger">{{ displayError }}</span>
 
 
@@ -75,34 +75,37 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from '@vue/composition-api';
-import { signUpStore } from '../store/User/user';
+import { UserStore } from '../store/User/user';
+import { useValidator } from "../util-function/authValidation";
 
 
 export default defineComponent({
     setup() {
+        const { isValidEmail, isValidPassword } = useValidator();
         const state = reactive({
             username: '',
             email: '',
             password: '',
-            password2: '',
+            confirmPassword: '',
             //ユーザー登録
-            signUpUser:  () => {
+            signUpUser: () => {
                 {
-                     signUpStore.signUpUser({
+                    UserStore.signUpUser({
+                        username: state.username,
                         email: state.email,
                         password: state.password
                     });
                 }
             },
-
-            displayError: computed(() => {
-                return signUpStore.errorMessage;
+            displayButton: computed((): boolean => {
+                return !isValidEmail(state.email) || isValidPassword(state.password, state.confirmPassword);
             }),
-
+            displayError: computed(() => {
+                return UserStore.getErrorMessage;
+            })
         });
-
-        return {
-            ...toRefs(state)
+                return {
+                    ...toRefs(state)
         };
     }
 });

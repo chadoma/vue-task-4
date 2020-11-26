@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '@/views/Home.vue';
 import SignIn from '@/views/SignIn.vue';
 import SignUp from '@/views/SignUp.vue';
+import DashBoard from '@/views/DashBoard.vue';
 import NotFound from '@/views/NotFound.vue';
 
 Vue.use(VueRouter);
@@ -28,6 +29,14 @@ const routes: Array<RouteConfig> = [
     path: '/sign-up',
     name: 'SignUp',
     component: SignUp,
+    meta: {
+      title: 'SignUp',
+    },
+  },
+  {
+    path: '/dashboard',
+    name: 'DashBoard',
+    component: DashBoard,
     meta: {
       title: 'SignUp',
     },
