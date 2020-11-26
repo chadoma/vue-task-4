@@ -36,6 +36,19 @@ class User extends VuexModule {
     }
 
     /**
+     * logout ユーザーをlogoutさせる
+     * params uid
+     */
+    @Mutation
+    clearLoginUser(uid: string) {
+        if (uid) {
+            const user = this.loggedInUser.findIndex(user => user.uid === uid);
+            this.loggedInUser.splice(user, 1);
+            router.push('/sign-in');
+        }
+    }
+
+    /**
      * Authentication, firestore へのユーザー登録 ログイン
      * param email password
      * param uid username yen
@@ -95,6 +108,19 @@ class User extends VuexModule {
         await router.push('/dashboard')
     }
 
+    /**
+     * logout ユーザーをlogoutさせる
+     * params uid
+     */
+    @Action
+    clearUser(uid: string) {
+        auth.onAuthStateChanged(user => {
+            auth.signOut().then(() => {
+                this.clearLoginUser(uid);
+            })
+                .catch(error => console.log(error))
+        });
+    }
 
     //エラーはあるか
     get getErrorMessage() {

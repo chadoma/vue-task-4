@@ -6,5 +6,8 @@ export const useValidator = () => {
     const isValidPassword = (password: string, confirmPassword: string): boolean => {
         return !(password === confirmPassword && password !== '' && password.length > 5);
     };
-    return {isValidEmail, isValidPassword}
+    const isValidPasswordLength = (password: string): boolean => {
+        return password.length <= 5
+    }
+    return {isValidEmail, isValidPassword, isValidPasswordLength}
 }

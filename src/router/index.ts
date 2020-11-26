@@ -5,6 +5,7 @@ import SignIn from '@/views/SignIn.vue';
 import SignUp from '@/views/SignUp.vue';
 import DashBoard from '@/views/DashBoard.vue';
 import NotFound from '@/views/NotFound.vue';
+import { auth } from "../firebase/credentials";
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,7 @@ const routes: Array<RouteConfig> = [
     component: DashBoard,
     meta: {
       title: 'SignUp',
+      requireAuth: true
     },
   },
   {
@@ -56,6 +58,21 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+
+
+//login後でないと、dashboardにアクセスできない
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.requireAuth)){
+    const user = auth.currentUser
+    if (!user) {
+      next({path: '/sign-in'})
+    }
+    next()
+  } else {
+    next()
+  }
+})
+
 
 router.afterEach(to => {
   if (!to.meta.title) {
