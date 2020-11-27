@@ -41,10 +41,11 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from '@vue/composition-api';
 import { UserStore } from '../store/User/user';
-
+import { useValidator } from '../util-function/authValidation';
 
 export default defineComponent({
     setup() {
+        const {isValidEmail, isValidPasswordLength} = useValidator()
         const state = reactive({
             email: '',
             password: '',
@@ -59,20 +60,15 @@ export default defineComponent({
             },
 
             displayButton: computed((): boolean =>{
-                if (!state.email.includes('@')) return true
-                return state.password.length <= 5;
+               return !isValidEmail(state.email) || isValidPasswordLength(state.password)
             }),
 
             displayError: computed(() => {
                 return UserStore.getErrorMessage;
             })
-
-
         });
-
-
-        return {
-            ...toRefs(state)
+                return {
+                 ...toRefs(state)
         };
     }
 });
