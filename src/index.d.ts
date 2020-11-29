@@ -7,4 +7,5 @@ declare module 'vue-material/dist/components' {
     export function MdContent(Vue: typeof _Vue, options?: any): void
     export function MdTabs(Vue: typeof _Vue, options?: any): void
     export function MdDialog(Vue: typeof _Vue, options?: any): void
+    export function MdField(Vue: typeof _Vue, options?: any): void
 }
