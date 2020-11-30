@@ -56,7 +56,7 @@ export default defineComponent({
             pay: null as number | null,
             userName: '',
             isOpenUserWallet: (id: string) => {
-                const targetUserIndex = state.getUserWallet(id)
+                const targetUserIndex: number = state.getUserWallet(id)
                 state.userName = (props.users![targetUserIndex]).username
                 state.showWalletDialog = true;
             },
@@ -64,7 +64,7 @@ export default defineComponent({
                 state.getUserWallet(id)
                 state.showPaymentDialog = true
             },
-            getUserWallet: (id: string) => {
+            getUserWallet: (id: string): number => {
                 const targetUserIndex = props.users!.findIndex((user) => user!.uid === id)
                 state.userWallet = (props.users![targetUserIndex]).yen
                 return targetUserIndex
