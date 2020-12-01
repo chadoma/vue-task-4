@@ -9,5 +9,7 @@ export const useValidator = () => {
     const isValidPasswordLength = (password: string): boolean => {
         return password.length <= 5
     }
+
     return {isValidEmail, isValidPassword, isValidPasswordLength}
 }
+

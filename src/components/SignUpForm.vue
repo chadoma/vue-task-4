@@ -76,7 +76,7 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from '@vue/composition-api';
 import { UserStore } from '../store/User/user';
-import { useValidator } from "../util-function/authValidation";
+import { useValidator } from "../util-function/validation";
 
 
 export default defineComponent({

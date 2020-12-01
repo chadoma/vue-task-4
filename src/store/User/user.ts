@@ -1,12 +1,6 @@
 import store from '../index';
-import {
-    Module,
-    VuexModule,
-    getModule,
-    Action,
-    Mutation
-} from 'vuex-module-decorators';
-import { UserModel } from "../user.model";
+import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
+import { DbUser, UserModel } from "../user.model";
 import { auth, db } from "../../firebase/credentials";
 import router from '../../router';
 
@@ -15,6 +9,7 @@ import router from '../../router';
 class User extends VuexModule {
 
     private loggedInUser: UserModel[] = [];
+    private dbUsers: DbUser[] = [];
     private error: string | null = null;
 
     /**
@@ -24,6 +19,11 @@ class User extends VuexModule {
     @Mutation
     saveSignUpAndSignInUser(user: UserModel) {
         this.loggedInUser!.push(user);
+    }
+
+    @Mutation
+    saveDbUsers(dbUsers: DbUser){
+        this.dbUsers.push(dbUsers);
     }
 
     /**
@@ -64,6 +64,7 @@ class User extends VuexModule {
                         yen,
                         username
                     };
+                    this.getDbUsers();
                     db.collection('Users').add(userSignUpAndLogin)
                       .then(doc => {
                           this.saveSignUpAndSignInUser(userSignUpAndLogin);
@@ -87,6 +88,7 @@ class User extends VuexModule {
         auth.signInWithEmailAndPassword(email, password)
             .then(res => {
                 const userLoginId = res.user!.uid;
+                this.getDbUsers();
                 this.getDbUser(userLoginId);
             })
             .catch(error => {
@@ -104,8 +106,9 @@ class User extends VuexModule {
             .collection('Users')
             .where('uid', '==', userLoginId)
             .get();
-        this.saveSignUpAndSignInUser(querySnapshot.docs[0].data() as UserModel)
-        await router.push('/dashboard')
+        const userSignUpAndLogin = querySnapshot.docs[0].data()
+        this.saveSignUpAndSignInUser(userSignUpAndLogin as UserModel);
+        await router.push('/dashboard');
     }
 
     /**
@@ -122,6 +125,26 @@ class User extends VuexModule {
         });
     }
 
+    /**
+     * Users DBから全てのユーザーを取得
+     */
+    @Action
+    getDbUsers() {
+        db.collection("Users").get()
+            .then((data)=> {
+               data.docs.forEach(doc => {
+                   const dbUser: DbUser = {
+                       uid: doc.data().uid,
+                       username: doc.data().username,
+                       yen: doc.data().yen
+                   }
+                  this.saveDbUsers(dbUser)
+
+               })
+            })
+            .catch(error => console.log(error))
+    }
+
     //エラーはあるか
     get getErrorMessage() {
         return this.error;
@@ -130,6 +153,11 @@ class User extends VuexModule {
     //ユーザーを取得
     get getLoggedInUser() {
         return this.loggedInUser;
+    }
+
+    get getUsers() {
+        const userUid = this.loggedInUser[0].uid;
+        return this.dbUsers.filter(user => user.uid !== userUid);
     }
 
     //ログインしているか？
