@@ -49,7 +49,6 @@ export default defineComponent({
         const state = reactive({
             email: '',
             password: '',
-
             signInUser: () => {
                 {
                     UserStore.signInUser({
@@ -58,11 +57,9 @@ export default defineComponent({
                     });
                 }
             },
-
             displayButton: computed((): boolean =>{
                return !isValidEmail(state.email) || isValidPasswordLength(state.password)
             }),
-
             displayError: computed(() => {
                 return UserStore.getErrorMessage;
             })

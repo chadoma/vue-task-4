@@ -1,6 +1,6 @@
 import store from '../index';
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators';
-import { DbUser, UserModel } from "../user.model";
+import { DbUser, SaveUsersWallet, UserModel } from "../user.model";
 import { auth, db } from "../../firebase/credentials";
 import router from '../../router';
 
@@ -22,7 +22,7 @@ class User extends VuexModule {
     }
 
     @Mutation
-    saveDbUsers(dbUsers: DbUser){
+    saveDbUsers(dbUsers: DbUser) {
         this.dbUsers.push(dbUsers);
     }
 
@@ -49,16 +49,40 @@ class User extends VuexModule {
     }
 
     /**
+     * 送り先のユーザーyenを更新
+     * @param targetId
+     * @param calcWallet
+     */
+    @Mutation
+    updateDbUser({ targetId, calcWallet }: { targetId: string, calcWallet: number }) {
+        const index = this.dbUsers.findIndex(user => user.uid === targetId);
+        this.dbUsers[index].yen = calcWallet;
+    }
+
+
+    /**
+     * 送ったユーザーのyenを更新
+     * @param targetId
+     * @param calcWallet
+     */
+    @Mutation
+    updateLoginUser({ targetId, calcWallet }: { targetId: string, calcWallet: number }) {
+        const index = this.loggedInUser.findIndex(user => user.uid === targetId);
+        this.loggedInUser[index].yen = calcWallet;
+    }
+
+    /**
      * Authentication, firestore へのユーザー登録 ログイン
      * param email password
      * param uid username yen
      */
     @Action
     signUpUser({ email, password, username }: { email: string, password: string, username: string }) {
+
         const yen = 500;
         auth.createUserWithEmailAndPassword(email, password)
             .then(res => {
-                    const userSignUpAndLogin:UserModel = {
+                    const userSignUpAndLogin: UserModel = {
                         email: res.user!.email!,
                         uid: res.user!.uid,
                         yen,
@@ -76,7 +100,6 @@ class User extends VuexModule {
                 console.log(error.message);
                 this.saveError(error.message);
             });
-
     }
 
     /**
@@ -106,7 +129,7 @@ class User extends VuexModule {
             .collection('Users')
             .where('uid', '==', userLoginId)
             .get();
-        const userSignUpAndLogin = querySnapshot.docs[0].data()
+        const userSignUpAndLogin = querySnapshot.docs[0].data();
         this.saveSignUpAndSignInUser(userSignUpAndLogin as UserModel);
         await router.push('/dashboard');
     }
@@ -121,7 +144,7 @@ class User extends VuexModule {
             auth.signOut().then(() => {
                 this.clearLoginUser(uid);
             })
-                .catch(error => console.log(error))
+                .catch(error => console.log(error));
         });
     }
 
@@ -131,19 +154,61 @@ class User extends VuexModule {
     @Action
     getDbUsers() {
         db.collection("Users").get()
-            .then((data)=> {
-               data.docs.forEach(doc => {
-                   const dbUser: DbUser = {
-                       uid: doc.data().uid,
-                       username: doc.data().username,
-                       yen: doc.data().yen
-                   }
-                  this.saveDbUsers(dbUser)
+          .then((data) => {
+              data.docs.forEach(doc => {
+                  const dbUser: DbUser = {
+                      uid: doc.data().uid,
+                      username: doc.data().username,
+                      yen: doc.data().yen
+                  };
+                  this.saveDbUsers(dbUser);
 
-               })
-            })
-            .catch(error => console.log(error))
+              });
+          })
+          .catch(error => console.log(error));
     }
+
+    /**
+     * 更新対象のユーザーyenを更新
+     * @param sendTargetUid
+     * @param calcTargetWallet
+     * @param calcMyWallet
+     */
+    @Action
+    saveUsersWallet({ sendTargetUid, calcTargetWallet, calcMyWallet }: SaveUsersWallet) {
+        try {
+            const loginUserId = this.getLoggedInUser[0].uid;
+            const mywWallet = [
+                { targetId: loginUserId, calcWallet: calcMyWallet },
+                { targetId: sendTargetUid, calcWallet: calcTargetWallet }
+            ];
+
+            const update = (id: string, calcWallet: number, targetId: string) => {
+                db.collection('Users')
+                  .doc(id)
+                  .update({
+                      'yen': calcWallet
+                  });
+                if (this.getLoggedInUser[0].uid === targetId) {
+                    this.updateLoginUser({ targetId, calcWallet });
+                } else {
+                    this.updateDbUser({ targetId, calcWallet });
+                }
+            };
+
+            mywWallet.forEach((wallet, index) => {
+                db.collection('Users')
+                  .where('uid', '==', wallet.targetId)
+                  .onSnapshot(querySnapshot => {
+                      update(querySnapshot.docs[0].id, wallet.calcWallet, wallet.targetId);
+                  });
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     //エラーはあるか
     get getErrorMessage() {
@@ -165,6 +230,5 @@ class User extends VuexModule {
         return this.loggedInUser.length > 0;
     }
 }
-
 
 export const UserStore = getModule(User);

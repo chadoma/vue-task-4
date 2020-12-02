@@ -11,3 +11,9 @@ export interface DbUser {
     yen: number
 }
 
+export interface SaveUsersWallet{
+    sendTargetUid: string
+    calcTargetWallet: number
+    calcMyWallet: number
+}
+

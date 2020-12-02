@@ -19,25 +19,28 @@
             <p class="dialog__para">{{ userWallet }}円</p>
         </md-dialog>
 
-        <md-dialog class="md-accent dialog" :md-active.sync="showPaymentDialog">
+        <md-dialog @md-closed="resetUser" class="md-accent dialog" :md-active.sync="showPaymentDialog">
             <md-dialog-title class="md-primary dialog__title">
-                あなたの残高: {{loginUser[0].yen}}<br />
+                あなたの残高: {{ loginUser[0].yen }}<br />
                 <span>送る金額</span>
             </md-dialog-title>
-        <div class="input-content">
-            <md-field>
-                <label>数字を入力してください</label>
-                <md-input v-model="pay"></md-input>
-            </md-field>
-            <md-button @click="sendPayment" class="input-button">送信</md-button>
-        </div>
+            <div class="input-content">
+                <md-field>
+                    <label>半角数字で入力してください</label>
+                    <md-input v-model="amount"></md-input>
+                </md-field>
+                <md-button @click="calcWallet" class="input-button">送信</md-button>
+            </div>
         </md-dialog>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from "@vue/composition-api";
-import { DbUser } from "../store/user.model";
+import { DbUser, UserModel } from "../store/user.model";
+import { useValidator } from '../util-function/validation';
+import { UserStore } from "../store/User/user";
+
 
 export default defineComponent({
     props: {
@@ -45,37 +48,64 @@ export default defineComponent({
             type: Array as () => DbUser[]
         },
         loginUser: {
-            type: Array
+            type: Array as () => UserModel[]
         }
     },
     setup(props) {
+        const { isValidInteger, isValidOverPay } = useValidator();
         const state = reactive({
             showWalletDialog: false,
             showPaymentDialog: false,
             userWallet: null as number | null,
-            pay: null as number | null,
+            amount: null as string | null,
             userName: '',
+            sendTargetUid: '',
             isOpenUserWallet: (id: string) => {
-                const targetUserIndex: number = state.getUserWallet(id)
-                state.userName = (props.users![targetUserIndex]).username
+                const targetUserIndex: number = state.getUserWallet(id);
+                state.userName = (props.users![targetUserIndex]).username;
                 state.showWalletDialog = true;
             },
             isOpenUserPayment: (id: string) => {
-                state.getUserWallet(id)
-                state.showPaymentDialog = true
+                state.sendTargetUid = id;
+                state.showPaymentDialog = true;
             },
             getUserWallet: (id: string): number => {
-                const targetUserIndex = props.users!.findIndex((user) => user!.uid === id)
-                state.userWallet = (props.users![targetUserIndex]).yen
-                return targetUserIndex
+                const targetUserIndex = props.users!.findIndex((user) => user!.uid === id);
+                state.userWallet = (props.users![targetUserIndex]).yen;
+                return targetUserIndex;
             },
-            sendPayment: () => {
-                console.log(state.pay)
+            // 自分の財布から送る額を計算
+            calcWallet: () => {
+                state.getUserWallet(state.sendTargetUid);
+                // 値は入力されているか、整数か
+                if (state.amount && isValidInteger(state.amount) && props.loginUser![0].yen) {
+                    // 現在額が支払額より上回っていないか
+                    const calcMyWallet = isValidOverPay(state.amount, props.loginUser![0].yen);
+                    state.saveUsersWallet(state.amount, calcMyWallet!);
+                } else {
+                    console.log('入力内容が間違っています');
+                }
+            },
+            // 送る側、送った側の値を更新
+            saveUsersWallet: (amount: string, calcMyWallet: number) => {
+                if (state.sendTargetUid && state.userWallet && calcMyWallet) {
+                    const calcTargetWallet = state.userWallet + parseInt(amount);
+                    state.showPaymentDialog = false;
+
+                    UserStore.saveUsersWallet({
+                        sendTargetUid: state.sendTargetUid,
+                        calcTargetWallet: calcTargetWallet,
+                        calcMyWallet: calcMyWallet
+                    });
+                } else {
+                    console.log('入力内容が間違っています');
+                }
             },
             resetUser: () => {
-                state.userWallet = null
-                state.pay = null
-                state.userName = ''
+                state.userWallet = null;
+                state.amount = null;
+                state.userName = '';
+                state.sendTargetUid = '';
             }
         });
             return {
@@ -84,6 +114,7 @@ export default defineComponent({
     }
 });
 </script>
+
 
 <style lang="scss" scoped>
 .dialog {
@@ -96,6 +127,7 @@ export default defineComponent({
         background-color: #515764;
         margin: 0;
     }
+
     &__para {
         text-align: center;
         font-size: 2.3rem;
@@ -104,11 +136,13 @@ export default defineComponent({
         background-color: #515764;
     }
 }
+
 .input-content {
     height: 130px;
     background-color: #515764;
     position: relative;
 }
+
 .input-button {
     width: 20px;
     background-color: orange;
