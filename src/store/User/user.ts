@@ -54,9 +54,9 @@ class User extends VuexModule {
      * @param calcWallet
      */
     @Mutation
-    updateDbUser({ targetId, calcWallet }: { targetId: string, calcWallet: number }) {
-        const index = this.dbUsers.findIndex(user => user.uid === targetId);
-        this.dbUsers[index].yen = calcWallet;
+    updateDbUser({ sendTargetUid, calcTargetWallet }: { sendTargetUid: string, calcTargetWallet: number }) {
+        const index = this.dbUsers.findIndex(user => user.uid === sendTargetUid);
+        this.dbUsers[index].yen = calcTargetWallet;
     }
 
 
@@ -66,9 +66,9 @@ class User extends VuexModule {
      * @param calcWallet
      */
     @Mutation
-    updateLoginUser({ targetId, calcWallet }: { targetId: string, calcWallet: number }) {
-        const index = this.loggedInUser.findIndex(user => user.uid === targetId);
-        this.loggedInUser[index].yen = calcWallet;
+    updateLoginUser({ myId, calcMyWallet }: { myId: string, calcMyWallet: number }) {
+        const index = this.loggedInUser.findIndex(user => user.uid === myId);
+        this.loggedInUser[index].yen = calcMyWallet;
     }
 
     /**
@@ -175,37 +175,29 @@ class User extends VuexModule {
      * @param calcMyWallet
      */
     @Action
-    saveUsersWallet({ sendTargetUid, calcTargetWallet, calcMyWallet }: SaveUsersWallet) {
+    async saveUsersWallet({ sendTargetUid, calcTargetWallet, calcMyWallet }: SaveUsersWallet) {
+
         try {
-            const loginUserId = this.getLoggedInUser[0].uid;
-            const mywWallet = [
-                { targetId: loginUserId, calcWallet: calcMyWallet },
-                { targetId: sendTargetUid, calcWallet: calcTargetWallet }
-            ];
-
-            const update = (id: string, calcWallet: number, targetId: string) => {
-                db.collection('Users')
-                  .doc(id)
-                  .update({
-                      'yen': calcWallet
-                  });
-                if (this.getLoggedInUser[0].uid === targetId) {
-                    this.updateLoginUser({ targetId, calcWallet });
-                } else {
-                    this.updateDbUser({ targetId, calcWallet });
-                }
-            };
-
-            mywWallet.forEach((wallet, index) => {
-                db.collection('Users')
-                  .where('uid', '==', wallet.targetId)
-                  .onSnapshot(querySnapshot => {
-                      update(querySnapshot.docs[0].id, wallet.calcWallet, wallet.targetId);
-                  });
-            });
-
-        } catch (error) {
-            console.log(error);
+            const myId = this.getLoggedInUser[0].uid;
+            const targetUserRef = await db.collection('Users')
+                                          .where('uid', '==', sendTargetUid).get();
+            const myUserRef = await db.collection('Users')
+                                      .where('uid', '==', myId).get();
+            await db.runTransaction(async transaction => {
+                transaction
+                    .update(db.collection('Users').doc(targetUserRef.docs[0].id), {
+                        'yen': calcTargetWallet
+                    })
+                    .update(db.collection('Users').doc(myUserRef.docs[0].id), {
+                        'yen': calcMyWallet
+                    });
+            })
+                    .then(res => {
+                        this.updateDbUser({ sendTargetUid, calcTargetWallet });
+                        this.updateLoginUser({ myId, calcMyWallet });
+                    });
+        } catch (e) {
+            throw new Error(`Failed transaction: ${ e.message }`);
         }
     }
 
